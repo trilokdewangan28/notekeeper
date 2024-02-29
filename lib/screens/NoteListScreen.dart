@@ -22,7 +22,7 @@ class _NoteListScreenState extends State<NoteListScreen> {
   initDb()async{
     final result = await DatabaseHelper.initDb();
     db = result;
-    print('instance of database is ${result.toString()}');
+    //print('instance of database is ${result.toString()}');
     await DatabaseHelper.createTable(db);
     fetchData();
   }
@@ -36,7 +36,7 @@ class _NoteListScreenState extends State<NoteListScreen> {
     }
     _mounted=true;
     final result = await DatabaseHelper.getData(db);
-    print('available data on table is ${result.toString()}');
+    //print('available data on table is ${result.toString()}');
     if(_mounted){
       noteList = result;
       setState(() {
@@ -55,17 +55,17 @@ class _NoteListScreenState extends State<NoteListScreen> {
   //=============================SHOW AVAILABLE TABLE
   showTable()async{
     final result = await DatabaseHelper.showTables(db);
-    print(result);
+   // print(result);
   }
   @override
   void initState() {
-    print('initstate called');
+    ///print('initstate called');
     initDb();
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
-    print(noteList);
+   // print(noteList);
     return Scaffold(
       appBar: AppBar(
         title: Text('Notes'),

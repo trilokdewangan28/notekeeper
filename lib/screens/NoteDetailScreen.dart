@@ -61,7 +61,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
         });
       }
     }
-    print('note detail is $result');
+    //print('note detail is $result');
   }
   
   //===========================ADD NEW NOTE
@@ -77,7 +77,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
       StaticMethod.showToastMsg('Note Added', Colors.green, context);
       fetchNoteDetail(result);
     }
-    print('add new note result is $result');
+    //print('add new note result is $result');
   }
   
   //===========================UPDATE EXISTING NOTE
@@ -93,7 +93,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
       fetchNoteDetail(noteId);
       StaticMethod.showToastMsg('note updated', Colors.green,context);
     }
-    print('updated result is $result');
+    //print('updated result is $result');
   }
 
   //=============================DELETE PARTICULAR NOTE
@@ -106,13 +106,13 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   //==========================DELETE EXISTING TABLE
   deleteExistingTable()async{
     final result = await DatabaseHelper.deleteTable('notekeeper_table', db);
-    print('deleting existing table result is $result');
+   // print('deleting existing table result is $result');
   }
   
   //==========================SHOW ALL TABLE
   showTables()async{
     final result = await DatabaseHelper.showTables(db);
-    print('show table result is : $result');
+   // print('show table result is : $result');
   }
   
   

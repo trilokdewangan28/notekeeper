@@ -4,7 +4,6 @@ class StaticMethod{
   
   //==================================SHOW TOAST MESSAGE
   static void showToastMsg(String msg, Color textColor,context){
-    print('show toast called');
     Fluttertoast.showToast(
       msg: msg,
       toastLength: Toast.LENGTH_SHORT,
