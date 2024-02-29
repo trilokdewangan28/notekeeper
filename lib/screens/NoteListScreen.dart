@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:notekeeper/StaticMethod.dart';
 import 'package:notekeeper/models/Note.dart';
 import 'package:notekeeper/screens/NoteDetailScreen.dart';
 import 'package:notekeeper/utils/DatabaseHelper.dart';
@@ -43,6 +45,13 @@ class _NoteListScreenState extends State<NoteListScreen> {
     }
   }
   
+  //=============================DELETE PARTICULAR NOTE
+  deleteNote(noteId)async{
+    final result = await DatabaseHelper.deleteExistingNote(noteId, db);
+    StaticMethod.showToastMsg('note deleted', Colors.green,context);
+    fetchData();
+  }
+  
   //=============================SHOW AVAILABLE TABLE
   showTable()async{
     final result = await DatabaseHelper.showTables(db);
@@ -50,6 +59,7 @@ class _NoteListScreenState extends State<NoteListScreen> {
   }
   @override
   void initState() {
+    print('initstate called');
     initDb();
     super.initState();
   }
@@ -61,51 +71,62 @@ class _NoteListScreenState extends State<NoteListScreen> {
         title: Text('Notes'),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: (){_isLoading=false; fetchData();}, icon: Icon(Icons.list))
+          IconButton(onPressed: (){_isLoading=false; fetchData();}, icon: Icon(Icons.refresh))
         ],
       ),
       body: Container(
         child: _isLoading
             ? Center(child: LinearProgressIndicator(),)
             : noteList.length>0
-            ? Text(noteList.toString())
-        // ListView.builder(
-        //     itemCount: noteList.length,
-        //     itemBuilder: (context,index){
-        //       final note = noteList[index];
-        //       return Card(
-        //         margin: EdgeInsets.symmetric(horizontal: 15,vertical: 7),
-        //         color: Colors.white,
-        //         elevation: 2.0,
-        //         child: ListTile(
-        //           leading: CircleAvatar(
-        //               backgroundColor: getPriorityColor(note.priority),
-        //               child: getPriorityIcon(note.priority)
-        //           ),
-        //           title: Text(
-        //               '${note.title}'
-        //           ),
-        //           subtitle: Text(
-        //               '${note.description}'
-        //           ),
-        //           trailing: GestureDetector(
-        //             onTap: (){
-        //              
-        //             },
-        //             child: Icon(Icons.delete),
-        //           ),
-        //           onTap: (){
-        //
-        //           },
-        //         ),
-        //       );
-        //     }
-        // )
+            ? 
+        ListView.builder(
+            itemCount: noteList.length,
+            itemBuilder: (context,index){
+              final note = noteList[index];
+              DateTime createdAt = DateTime.parse(note['createdAt']);
+              String formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(createdAt);
+              return Card(
+                margin: EdgeInsets.symmetric(horizontal: 15,vertical: 7),
+                color: Colors.white,
+                elevation: 2.0,
+                child: ListTile(
+                  leading: CircleAvatar(
+                      backgroundColor: getPriorityColor(note['priority']),
+                      child: getPriorityIcon(note['priority'])
+                  ),
+                  title: Text(
+                      '${note['title']}'
+                  ),
+                  subtitle: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${formattedDate}'
+                      ),
+                      Text(
+                          '${note['description']}'
+                      ),
+                    ],
+                  ),
+                  trailing: GestureDetector(
+                    onTap: (){
+                      deleteNote(note['id']);
+                    },
+                    child: Icon(Icons.delete),
+                  ),
+                  onTap: (){
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>NoteDetailScreen('Edit Note', db, note['id'])));
+                    },
+                ),
+              );
+            }
+        )
             : Center(child: Text('Empty Notes'),),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>NoteDetailScreen('Add Note',db)));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>NoteDetailScreen('Add Note', db, 0)));
         },
         child: Icon(Icons.add),
         tooltip: 'Add Note',
@@ -113,12 +134,12 @@ class _NoteListScreenState extends State<NoteListScreen> {
     );
   }
   // Returns the priority color
-  Color getPriorityColor(int priority) {
+  Color getPriorityColor(String priority) {
     switch (priority) {
-      case 1:
+      case 'High':
         return Colors.red;
         break;
-      case 2:
+      case 'Low':
         return Colors.yellow;
         break;
 
@@ -128,12 +149,12 @@ class _NoteListScreenState extends State<NoteListScreen> {
   }
 
   // Returns the priority icon
-  Icon getPriorityIcon(int priority) {
+  Icon getPriorityIcon(String priority) {
     switch (priority) {
-      case 1:
+      case "High":
         return Icon(Icons.play_arrow);
         break;
-      case 2:
+      case "Low":
         return Icon(Icons.keyboard_arrow_right);
         break;
 

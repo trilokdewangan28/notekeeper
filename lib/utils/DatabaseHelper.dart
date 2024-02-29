@@ -7,6 +7,18 @@ class DatabaseHelper{
   static String dbName='notekeeper_db.db';
   static String tableName="notekeeper_table";
 
+  //=================================================CREATE CONNECTION AND TABLE
+  static Future<sql.Database> initDb()async{
+    final  mydb =  sql.openDatabase(
+      '$dbName',
+      version: 1,
+      // onCreate:  (sql.Database database, int version)async{
+      //   await createTable(database);
+      // }
+    );
+    return mydb;
+  }
+
   //============================================================CREATE TABLE 
   static Future createTable(sql.Database database)async{
     String sql = 'CREATE TABLE IF NOT EXISTS $tableName(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, title TEXT, description TEXT, createdAt TEXT, priority TEXT)';
@@ -20,20 +32,7 @@ class DatabaseHelper{
         "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';");
     return result;
   }
-
-  //=================================================CREATE CONNECTION AND TABLE
-  static Future<sql.Database> initDb()async{
-    final  mydb =  sql.openDatabase(
-        '$dbName',
-        version: 1,
-        // onCreate:  (sql.Database database, int version)async{
-        //   await createTable(database);
-        // }
-    );
-    return mydb;
-  }
-
-
+  
   //===============================================================INSERT ITEMS
   static Future<int> addNewNotes(sql.Database db,data)async{
     //final db = await SqlHelper.db();
@@ -44,7 +43,7 @@ class DatabaseHelper{
   //==========================================================FETCH THE DATA
   static Future<List<Map<String,dynamic>>> getData(sql.Database db)async{
     //final db = await SqlHelper.db();
-    final result = db.query('$tableName',orderBy: 'id');
+    final result = db.query('$tableName',orderBy: 'createdAt DESC');
     return result;
   }
 
@@ -56,20 +55,15 @@ class DatabaseHelper{
   }
 
   //=========================================================UPDATE THE DATA
-  static Future<int> updateItem(String title, String description, int id,sql.Database db)async{
+  static Future<int> updateExistingNote(Map<String,dynamic> data, int id,sql.Database db)async{
     //final db = await SqlHelper.db();
-    final data = {
-      "title":title,
-      "description":description,
-      "createdAt":DateTime.now().toString()
-    };
     final result = await db.update('$tableName', data, where: 'id=?',whereArgs: [id]);
     return result;
 
   }
 
   //===================================================DELETE DATA BY ID
-  static Future<int> deleteItem(int id,sql.Database db)async{
+  static Future<int> deleteExistingNote(int id,sql.Database db)async{
     //final db = await SqlHelper.db();
     final result = await db.delete('$tableName',where: 'id=?',whereArgs: [id]);
     return result;
