@@ -25,6 +25,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   
   static var _priorities = ['High','Low'];
   String selectedPriority = 'Low';
+  String priority = '';
   Map<String,dynamic> noteDetail={};
   String formattedDate='';
   bool _isLoading = false;
@@ -128,12 +129,13 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
     super.dispose();
   }
   
+  
   @override
   Widget build(BuildContext context) {
     if(noteDetail.isNotEmpty){
       titleController.text = noteDetail['title'];
       descriptionController.text=noteDetail['description'];
-      selectedPriority = noteDetail['priority'];
+      priority = noteDetail['priority'];
       DateTime createdAt = DateTime.parse(noteDetail['createdAt']);
       formattedDate = DateFormat('dd-MM-yyyy HH:mm').format(createdAt);
     }
@@ -156,35 +158,44 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               child: ListView(
                 children: [
                   //=========================================PRIORITY DRODOWN
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Select Priority'),
-                      Card(
-                        color: Colors.white,
-                        elevation: 0.5,
-                        child: Container(
-                            height: 35,
-                            width: MediaQuery.of(context).size.width*0.3,
-                            child: Center(
-                              child: DropdownButton(
-                                alignment: Alignment.center,
-                                underline: Container(),
-                                items: _priorities.map((String dropDownStringItem){
-                                  return DropdownMenuItem<String>(
-                                    value: dropDownStringItem,
-                                    child: Text(dropDownStringItem),
-                                  );
-                                }).toList(),
-                                value: selectedPriority,
-                                onChanged: (value){
-                                  setState(() {
-                                    selectedPriority = value!;
-                                  });
-                                },
-                              ),
-                            )
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('Select Priority'),
+                          SizedBox(width: 10,),
+                          Card(
+                            color: Colors.white,
+                            elevation: 0.5,
+                            child: Container(
+                                height: 35,
+                                width: MediaQuery.of(context).size.width*0.3,
+                                child: Center(
+                                  child: DropdownButton(
+                                    alignment: Alignment.center,
+                                    underline: Container(),
+                                    items: _priorities.map((String dropDownStringItem){
+                                      return DropdownMenuItem<String>(
+                                        value: dropDownStringItem,
+                                        child: Text(dropDownStringItem),
+                                      );
+                                    }).toList(),
+                                    value: selectedPriority,
+                                    onChanged: (value){
+                                      setState(() {
+                                        selectedPriority = value!;
+                                      });
+                                    },
+                                  ),
+                                )
+                            ),
+                          ),
+                          SizedBox(width: 20,),
+                          Text('$priority priority',style: TextStyle(color: priority=='High'?Colors.red : Colors.orange,fontWeight: FontWeight.w500),),
+                        ],
                       ),
                       Text(
                           '$formattedDate'

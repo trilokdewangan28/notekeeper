@@ -95,7 +95,7 @@ class _NoteListScreenState extends State<NoteListScreen> {
                       child: getPriorityIcon(note['priority'])
                   ),
                   title: Text(
-                      '${note['title']}'
+                      '${note['title'].toUpperCase()}'
                   ),
                   subtitle: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -140,11 +140,11 @@ class _NoteListScreenState extends State<NoteListScreen> {
         return Colors.red;
         break;
       case 'Low':
-        return Colors.yellow;
+        return Colors.orange;
         break;
 
       default:
-        return Colors.yellow;
+        return Colors.orange;
     }
   }
 
